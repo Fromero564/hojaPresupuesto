@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronativo</title>
+</head>
+<body  style="display: flex;">
+
+    <div>
+    <h1>Datos del archivo Excel</h1>
+
+    <form action="/buscar" method="get">
+        <input type="text" name="query" placeholder="Buscar por código o nombre">
+        <button type="submit">Buscar</button>
+    </form>
+    <% cabecera.forEach(columna => { %>
+        <th><%= columna %></th>
+    <% }) %>
+    <% datos.forEach(fila => { %>
+       <form action="/agregarPresupuesto" method="post" >
+        <input type="text" name="codigo" value="<%= fila[0] %>" readonly>
+        <input type="text" name="nombre" value="<%= fila[1] %>" readonly>
+        <input type="text" name="precio" value="<%= fila[2] %>" readonly>
+        <button type="submit">Cargar</button>
+       </form>
+       <% }) %>
+    
+    </div>
+
+    <div>
+            <!-- Información general -->
+            <label>Numero Presupuesto:</label>
+            <input type="text">
+            
+            <label>Fecha:</label>
+            <input type="date">
+            
+            <label>Apellido y Nombre/Razon Social:</label>
+            <input type="text">
+            
+            <label>Domicilio:</label>
+            <input type="text">
+            <% if (presupuestoActual && presupuestoActual.length > 0) { %>
+                <% presupuestoActual.forEach(producto => { %>
+                    <div style="margin-bottom: 10px;">  <!-- Espacio entre cada producto -->
+                        <input type="text" name="codigo" value="<%= producto.codigo || '' %>" readonly>
+                        <input type="text" name="nombre" value="<%= producto.nombre || '' %>" readonly>
+                        <input type="text" name="precio" value="<%= producto.precio || '' %>" readonly>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No hay productos disponibles.</p>
+            <% } %>
+    </div>
+    
+
+</body>
+</html>

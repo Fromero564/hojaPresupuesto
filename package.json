@@ -1,0 +1,21 @@
+{
+  "name": "electrontivoprograma",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "Fernando Romero",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "read-excel-file": "^5.8.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
