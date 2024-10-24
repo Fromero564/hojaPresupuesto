@@ -29,7 +29,7 @@ module.exports = {
           
 
     // Renderizar la vista pasando la cabecera y los datos modificados
-    res.render("index", { cabecera, datos: datosModificados,presupuestoActual:[], datosProducto: req.session.datosProducto || [] });
+    res.render("index", { cabecera, datos: datosModificados,presupuestoActual:[] });
 
         } catch (err) {
             // Manejo de errores en caso de que la lectura del archivo falle
@@ -73,6 +73,7 @@ module.exports = {
             res.render("index", {
                 cabecera,
                 datos: datosModificados,
+                presupuestoActual:[],
                 datosProducto: req.session.datosProducto || []  // Mantener los productos agregados
             });
         } catch (err) {
@@ -84,6 +85,7 @@ module.exports = {
         let codigo = req.body.codigo;
         let nombre = req.body.nombre;
         let precio = req.body.precio;
+        let index = req.body.index;
     
         const jsonPath = path.join(__dirname, '..', 'public', 'json', 'presupuesto.json');
     
@@ -109,7 +111,8 @@ module.exports = {
             const nuevoPresupuesto = {
                 codigo,
                 nombre,
-                precio
+                precio,
+                index
             };
     
             // Agregar el nuevo objeto al array existente
@@ -118,7 +121,7 @@ module.exports = {
             // Escribir el archivo actualizado
             await fs.promises.writeFile(jsonPath, JSON.stringify(presupuestoActual, null, 2));
     
-            console.log('presupuestoActual:', presupuestoActual);
+     
     
             // Ruta completa del archivo Excel en la carpeta 'public'
             const filePath = path.join(__dirname, '../public/articulos_inventados.xlsx');
@@ -142,8 +145,8 @@ module.exports = {
             res.render("index", {
                 cabecera,
                 datos: datosModificados,
-                presupuestoActual, // Asegúrate de que esto se pase correctamente
-                datosProducto: req.session.datosProducto || []
+                presupuestoActual, 
+  
             });
     
         } catch (err) {
@@ -151,6 +154,65 @@ module.exports = {
             res.status(500).json({ message: 'Error procesando la solicitud' });
         }
     },
+
+    eliminarItem:async(req,res)=>{
+        const indexToDelete = req.body.index; // El índice pasado desde el frontend
+    
+        const jsonPath = path.join(__dirname, '..', 'public', 'json', 'presupuesto.json');
+        
+          // Ruta completa del archivo Excel en la carpeta 'public'
+          const filePath = path.join(__dirname, '../public/articulos_inventados.xlsx');
+            
+          // Usamos await para esperar a que se lean todas las filas antes de seguir
+          const filas = await readXlsxFile(filePath);
+          
+           // Separar la cabecera del resto de las filas
+           const cabecera = filas[0];  // Primera fila como cabecera
+           const datos = filas.slice(1);  // El resto de las filas son los datos
+                
+    
+           // Iterar sobre los datos y dividir el precio (supongamos que está en la tercera columna, índice 2)
+          const datosModificados = await datos.map(fila => {
+             if (fila[2] && typeof fila[2] === 'number') {
+          fila[2] = (fila[2] / 0.7).toFixed(2);  // Dividir el precio por 0.7
+           }
+            return fila;
+          });
+
+
+      
+        try {
+            // Lee el archivo JSON
+            const data = await fs.promises.readFile(jsonPath, 'utf8');
+            
+            let presupuestoActual = [];
+    
+            // Si el archivo tiene contenido, parsea el JSON
+            if (data) {
+                presupuestoActual = JSON.parse(data);
+            }
+    
+            // Encuentra el índice del objeto con el mismo 'index'
+            const updatedPresupuesto = presupuestoActual.filter(item => item.index !== indexToDelete);
+    
+            // Sobrescribe el archivo JSON con el nuevo array actualizado
+            await fs.promises.writeFile(jsonPath, JSON.stringify(updatedPresupuesto, null, 2), 'utf8');
+    
+          
+    
+            // Responder al cliente confirmando que se eliminó el item y renderiza la vista
+            res.render("index", {
+                cabecera,
+                datos: datosModificados,
+                presupuestoActual: updatedPresupuesto, 
+             
+            });
+        } catch (error) {
+            // Manejar errores
+            console.error(error);
+            res.status(500).json({ success: false, message: 'Error eliminando el producto' });
+        }
+    }
 
 
      
