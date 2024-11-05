@@ -91,20 +91,23 @@ module.exports = {
     
         // Asegúrate de que el archivo existe y está inicializado correctamente
         if (!fs.existsSync(jsonPath)) {
-            // Si no existe, crear un archivo vacío con un array vacío
             fs.writeFileSync(jsonPath, JSON.stringify([], null, 2), 'utf8');
         }
     
         try {
             const data = await fs.promises.readFile(jsonPath, 'utf8');
     
-            // Inicializa presupuestoActual como un array vacío
             let presupuestoActual = [];
-    
-            // Verificar si el archivo no está vacío antes de parsear
             if (data) {
-                // Parsear el JSON solo si hay contenido
                 presupuestoActual = JSON.parse(data);
+            }
+    
+            // Verificar si el producto ya existe en el presupuestoActual
+            const productoExistente = presupuestoActual.find(item => item.codigo === codigo);
+    
+            if (productoExistente) {
+                // Enviar un aviso de que el producto ya está en el presupuesto
+                return res.status(400).json({ message: "El producto ya se agregó al presupuesto." });
             }
     
             // Crear el nuevo objeto
@@ -117,26 +120,18 @@ module.exports = {
     
             // Agregar el nuevo objeto al array existente
             presupuestoActual.push(nuevoPresupuesto);
-    
-            // Escribir el archivo actualizado
             await fs.promises.writeFile(jsonPath, JSON.stringify(presupuestoActual, null, 2));
-    
-     
     
             // Ruta completa del archivo Excel en la carpeta 'public'
             const filePath = path.join(__dirname, '../public/articulos_inventados.xlsx');
-    
-            // Usamos await para esperar a que se lean todas las filas antes de seguir
             const filas = await readXlsxFile(filePath);
+            const cabecera = filas[0];
+            const datos = filas.slice(1);
     
-            // Separar la cabecera del resto de las filas
-            const cabecera = filas[0];  // Primera fila como cabecera
-            const datos = filas.slice(1);  // El resto de las filas son los datos
-    
-            // Iterar sobre los datos y dividir el precio (supongamos que está en la tercera columna, índice 2)
+            // Modificar los datos del precio
             const datosModificados = datos.map(fila => {
                 if (fila[2] && typeof fila[2] === 'number') {
-                    fila[2] = (fila[2] / 0.7).toFixed(2);  // Dividir el precio por 0.7
+                    fila[2] = (fila[2] / 0.7).toFixed(2);
                 }
                 return fila;
             });
@@ -145,14 +140,14 @@ module.exports = {
             res.render("index", {
                 cabecera,
                 datos: datosModificados,
-                presupuestoActual, 
-  
+                presupuestoActual,
             });
     
         } catch (err) {
             console.error('Error:', err);
             res.status(500).json({ message: 'Error procesando la solicitud' });
         }
+    
     },
 
     eliminarItem:async(req,res)=>{
