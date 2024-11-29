@@ -1,119 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Electronativo</title>
 </head>
 <body  style="display: flex;">
+    <div class="form-container">
+        <h1>Datos del archivo Excel</h1>
 
-    <div>
-    <h1>Datos del archivo Excel</h1>
-
-    <form action="/buscar" method="get">
-        <input type="text" name="query" placeholder="Buscar por código o nombre">
-        <button type="submit">Buscar</button>
-    </form>
-    <% cabecera.forEach(columna => { %>
-        <th><%= columna %></th>
-    <% }) %>
-    <% datos.forEach((fila, index) => { %>
-        <form action="/agregarPresupuesto" method="post">
-           <input type="text" name="codigo" value="<%= fila[0] %>" readonly>
-           <input type="text" name="nombre" value="<%= fila[1] %>" readonly>
-           <input type="text" name="precio" value="<%= fila[2] %>" readonly>
-           <input type="hidden" name="index" value="<%= index %>" readonly>
-           <button type="submit">Cargar</button>
+        <form action="/buscar" method="get">
+            <input type="text" name="query" placeholder="Buscar por código o nombre" class="input-field">
+            <button type="submit" class="button">Buscar</button>
         </form>
-     <% }) %>
+
+        <% cabecera.forEach(columna => { %>
+            <th><%= columna %></th>
+        <% }) %>
+
+        <% datos.forEach((fila, index) => { %>
+            <form action="/agregarPresupuesto" method="post">
+                <input type="text" name="codigo" value="<%= fila[0] %>" class="input-field" readonly>
+                <input type="text" name="nombre" value="<%= fila[1] %>" class="input-field" readonly>
+                <input type="text" name="precio" value="<%= fila[2] %>" class="input-field" readonly>
+                <input type="hidden" name="index" value="<%= index %>" readonly>
+                <button type="submit" class="button">Cargar</button>
+            </form>
+        <% }) %>
     </div>
 
-    <div>
-            <!-- Información general -->
-            <label>Numero Presupuesto:</label>
-            <input type="text">
-            
-            <label>Fecha:</label>
-            <input type="date">
-            
-            <label>Apellido y Nombre/Razon Social:</label>
-            <input type="text">
-            
-            <label>Domicilio:</label>
-            <input type="text">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Codigo</th>
-                        <th>Nombre</th>
-                        <th>Precio Unitario</th>
-                        <th>Cantidad</th>
-                        <th>Precio total</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (presupuestoActual && presupuestoActual.length > 0) { %>
-                        <% presupuestoActual.forEach(producto => { %>
-                            <tr>
-                                <form action="/retirarItem" method="post">
-                                <td><input type="text" name="codigo" value="<%= producto.codigo || '' %>" readonly></td>
-                                <td><input type="text" name="nombre" value="<%= producto.nombre || '' %>" readonly></td>
-                                <td><input type="text" name="precio" value="<%= producto.precio || '' %>" readonly></td>
-                                <td>
-                                    <input type="number" name="cantidad" value="0" oninput="actualizarPrecioTotal(this)">
-                                    <button type="button" onclick="aumentar(this)">+</button>
-                                    <button type="button" onclick="disminuir(this)">-</button>
-                                    
-                                </td>
-                                <td><input type="text" name="precioTotal" value="0.00" readonly></td>
-                                <input type="hidden" name="index" value="<%= producto.index || '' %>" readonly>
-                                <td><button type="submit"> Eliminar</button></td>
-                               </form>
-                            </tr>
-                        <% }) %>
-                    <% } else { %>
+    <div class="form-container">
+        <label>Numero Presupuesto:</label>
+        <input type="text" class="input-field">
+        
+        <label>Fecha:</label>
+        <input type="date" class="input-field">
+        
+        <label>Apellido y Nombre/Razon Social:</label>
+        <input type="text" class="input-field">
+        
+        <label>Domicilio:</label>
+        <input type="text" class="input-field">
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Nombre</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Precio total</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (presupuestoActual && presupuestoActual.length > 0) { %>
+                    <% presupuestoActual.forEach(producto => { %>
                         <tr>
-                            <td colspan="3">Esperando productos...</td>
+                            <form action="/retirarItem" method="post">
+                                <td><input type="text" name="codigo" value="<%= producto.codigo || '' %>" class="table-input" readonly></td>
+                                <td><input type="text" name="nombre" value="<%= producto.nombre || '' %>" class="table-input" readonly></td>
+                                <td><input type="text" name="precio" value="<%= producto.precio || '' %>" class="table-input" readonly></td>
+                                <td>
+                                    <input type="number" name="cantidad" value="0" class="input-field" oninput="actualizarPrecioTotal(this)">
+                                    <button type="button" class="button-small" onclick="aumentar(this)">+</button>
+                                    <button type="button" class="button-small" onclick="disminuir(this)">-</button>
+                                </td>
+                                <td><input type="text" name="precioTotal" value="0.00" class="table-input" readonly></td>
+                                <input type="hidden" name="index" value="<%= producto.index || '' %>" readonly>
+                                <td><button type="submit" class="button">Eliminar</button></td>
+                            </form>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="3">Esperando productos...</td>
+                    </tr>
+                <% } %>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
+                    <td><input type="text" id="total" value="0.00" class="table-input" readonly></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-    
+
     <script>
 
 function aumentar(boton) {
-    let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
+    let row = boton.closest('tr');
+    let inputCantidad = row.querySelector('input[name="cantidad"]');
+    let codigo = row.querySelector('input[name="codigo"]').value;
+
     let cantidad = parseInt(inputCantidad.value) + 1;
     inputCantidad.value = cantidad;
+
+    guardarCantidad(codigo, cantidad);
     actualizarPrecioTotal(boton);
 }
 
 function disminuir(boton) {
-    let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
+    let row = boton.closest('tr');
+    let inputCantidad = row.querySelector('input[name="cantidad"]');
+    let codigo = row.querySelector('input[name="codigo"]').value;
+
     let cantidad = Math.max(0, parseInt(inputCantidad.value) - 1);
     inputCantidad.value = cantidad;
+
+    guardarCantidad(codigo, cantidad);
     actualizarPrecioTotal(boton);
 }
 
 function actualizarPrecioTotal(boton) {
-    let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
+    let row = boton.closest('tr');
+    let inputCantidad = row.querySelector('input[name="cantidad"]');
     let cantidad = parseInt(inputCantidad.value);
 
-    // Verificar si la cantidad es negativa
     if (cantidad < 0) {
         alert("Error: La cantidad no puede ser negativa.");
-        inputCantidad.value = 0; // Reiniciar a 0
-        cantidad = 0; // Reiniciar la cantidad a 0 para evitar cálculo incorrecto
+        inputCantidad.value = 0;
+        cantidad = 0;
     }
 
-    let inputPrecioUnitario = boton.closest('tr').querySelector('input[name="precio"]');
+    let inputPrecioUnitario = row.querySelector('input[name="precio"]');
     let precioUnitario = parseFloat(inputPrecioUnitario.value);
 
-    let inputPrecioTotal = boton.closest('tr').querySelector('input[name="precioTotal"]');
+    let inputPrecioTotal = row.querySelector('input[name="precioTotal"]');
     inputPrecioTotal.value = (cantidad * precioUnitario).toFixed(2);
 }
+
+function guardarCantidad(codigo, cantidad) {
+    let cantidades = JSON.parse(localStorage.getItem('cantidades')) || {};
+    cantidades[codigo] = cantidad;
+    localStorage.setItem('cantidades', JSON.stringify(cantidades));
+}
+
+function cargarCantidades() {
+    let cantidades = JSON.parse(localStorage.getItem('cantidades')) || {};
+
+    document.querySelectorAll('tr').forEach(row => {
+        let inputCodigo = row.querySelector('input[name="codigo"]');
+        if (inputCodigo) {
+            let codigo = inputCodigo.value;
+            if (cantidades[codigo] !== undefined) {
+                let inputCantidad = row.querySelector('input[name="cantidad"]');
+                inputCantidad.value = cantidades[codigo];
+
+                let boton = row.querySelector('button'); // Cualquier botón del mismo row
+                actualizarPrecioTotal(boton);
+            }
+        }
+    });
+}
+function calcularTotal() {
+    let total = 0;
+
+    // Recorre todos los inputs de precioTotal y suma sus valores
+    document.querySelectorAll('input[name="precioTotal"]').forEach(input => {
+        total += parseFloat(input.value) || 0; // Convierte a número o usa 0 si está vacío
+    });
+
+    // Actualiza el campo total
+    document.getElementById('total').value = total.toFixed(2);
+}
+
+// Cargar cantidades al iniciar la página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCantidades();
+    calcularTotal(); // Inicializa el total al cargar
+
+// Actualiza el total cada vez que se cambian cantidades o precios
+document.querySelectorAll('input[name="cantidad"]').forEach(input => {
+    input.addEventListener('input', () => calcularTotal());
+});
+
+    // Previene el envío del formulario al presionar Enter en los campos de cantidad
+    document.querySelectorAll('input[name="cantidad"]').forEach(input => {
+        input.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evita el comportamiento predeterminado
+                let row = input.closest('tr');
+                let boton = row.querySelector('button'); // Referencia a un botón del row
+                guardarCantidad(
+                    row.querySelector('input[name="codigo"]').value,
+                    parseInt(input.value)
+                );
+                actualizarPrecioTotal(boton);
+            }
+        });
+    });
+});
     </script>
 
 </body>

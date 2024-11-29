@@ -1,11 +1,5 @@
 [
   {
-    "codigo": "A001",
-    "nombre": "Laptop",
-    "precio": "1714.29",
-    "index": "0"
-  },
-  {
     "codigo": "A006",
     "nombre": "Impresora",
     "precio": "214.29",
