@@ -1,0 +1,15 @@
+{
+  "name": "electrontivoprograma",
+  "version": "1.0.0",
+  "description": "Programa de presupuesto",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Fernando Romero",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
+  }
+}
