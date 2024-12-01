@@ -79,25 +79,55 @@
                     <% } %>
                 </tbody>
             </table>
+
+                 <!-- Total Section -->
+        <div style="font-weight: bold; margin-top: 20px;">
+            <label>Total: </label>
+            <span id="total">0.00</span>
+        </div>
     </div>
-    
+    <% if (alertMessage) { %>
+        <div style=" 
+            background-color: #bd0010;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            z-index: 1000;
+        ">
+            <%= alertMessage %>
+        </div>
+    <% } %>
+
     <script>
+            // Evitar que presionar Enter envíe el formulario
+            document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Evita que el formulario se envíe
+                }
+            });
+        });
 
-function aumentar(boton) {
-    let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
-    let cantidad = parseInt(inputCantidad.value) + 1;
-    inputCantidad.value = cantidad;
-    actualizarPrecioTotal(boton);
-}
+        function aumentar(boton) {
+            let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
+            let cantidad = parseInt(inputCantidad.value) + 1;
+            inputCantidad.value = cantidad;
+            actualizarPrecioTotal(boton);
+        }
 
-function disminuir(boton) {
-    let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
-    let cantidad = Math.max(0, parseInt(inputCantidad.value) - 1);
-    inputCantidad.value = cantidad;
-    actualizarPrecioTotal(boton);
-}
-
-function actualizarPrecioTotal(boton) {
+        function disminuir(boton) {
+            let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
+            let cantidad = Math.max(0, parseInt(inputCantidad.value) - 1);
+            inputCantidad.value = cantidad;
+            actualizarPrecioTotal(boton);
+        }
+        function actualizarPrecioTotal(boton) {
     let inputCantidad = boton.parentElement.querySelector('input[name="cantidad"]');
     let cantidad = parseInt(inputCantidad.value);
 
@@ -113,6 +143,17 @@ function actualizarPrecioTotal(boton) {
 
     let inputPrecioTotal = boton.closest('tr').querySelector('input[name="precioTotal"]');
     inputPrecioTotal.value = (cantidad * precioUnitario).toFixed(2);
+
+    // Actualizar el total
+    actualizarTotal();
+}
+
+function actualizarTotal() {
+    let total = 0;
+    document.querySelectorAll('input[name="precioTotal"]').forEach(input => {
+        total += parseFloat(input.value) || 0;
+    });
+    document.getElementById('total').textContent = total.toFixed(2);
 }
     </script>
 

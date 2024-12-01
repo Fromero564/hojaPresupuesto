@@ -6,9 +6,25 @@
     "index": "0"
   },
   {
+    "codigo": "A003",
+    "nombre": "Teclado",
+    "precio": "64.29",
+    "index": "2"
+  },
+  {
+    "codigo": "A002",
+    "nombre": "Smartphone",
+    "precio": "1214.29",
+    "cantidad": 1,
+    "precioTotal": "1214.29",
+    "index": "1"
+  },
+  {
     "codigo": "A006",
     "nombre": "Impresora",
     "precio": "214.29",
+    "cantidad": 1,
+    "precioTotal": "214.29",
     "index": "5"
   }
 ]
